@@ -1,0 +1,32 @@
+bdalab@mcalab04-30:~/220968424/week4$ cat Doc1.txt Doc2.txt | python3 mapper2.py
+this	1
+sample	1
+document	1
+another	1
+document	1
+sample	1
+text	1
+
+
+bdalab@mcalab04-30:~/220968424/week4$ cat Doc1.txt Doc2.txt | python3 mapper2.py | python3 reducer2.py
+this	1
+sample	2
+document	2
+another	1
+text	1
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -put Doc1.txt /user/220968424/lab4
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -put Doc2.txt /user/220968424/lab4
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.4.1.jar -file mapper2.py -mapper 'python3 mapper2.py' -file ./reducer2.py -reducer 'python3 reducer2.py' -input /user/220968424/lab4/Doc1.txt -input /user/220968424/lab4/Doc2.txt -output /user/220968424/lab4/output2
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -cat /user/220968424/lab4/output2/part-00000
+another	1
+document	2
+sample	2
+text	1
+this	1

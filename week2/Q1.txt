@@ -1,0 +1,159 @@
+bdalab@mcalab04-30:~$ hdfs dfs -mkdir /user/220968424
+bdalab@mcalab04-30:~$ hdfs dfs -mkdir /user/220968424/lab2
+
+bdalab@mcalab04-30:~$ hdfs dfs -put /home/bdalab/220968424/week2/text.txt /user/220968424/lab2
+
+
+
+(a)
+
+1.
+
+a.
+bdalab@mcalab04-30:~$ hdfs dfs -ls /user/220968424/lab2/text.txt
+-rw-r--r--   1 bdalab supergroup   12916311 2025-01-15 14:31 /user/220968424/lab2/text.txt
+
+b.
+bdalab@mcalab04-30:~$ hdfs dfs -chmod u+x /user/220968424/lab2/text.txt
+
+c.
+bdalab@mcalab04-30:~$ hdfs dfs -ls /user/220968424/lab2/text.txt
+-rwxr--r--   1 bdalab supergroup   12916311 2025-01-15 14:31 /user/220968424/lab2/text.txt
+
+owner is bdalab
+
+
+2.
+
+a.
+bdalab@mcalab04-30:~$ hdfs fsck /user/220968424/lab2/text.txt -files
+
+b.
+bdalab@mcalab04-30:~$ hdfs dfs -stat %r /user/220968424/lab2/text.txt
+1
+
+c.
+bdalab@mcalab04-30:~$ hdfs dfs -setrep -R 3 /user/220968424/lab2/text.txt
+Replication 3 set: /user/220968424/lab2/text.txt
+
+
+3.
+
+a.
+bdalab@mcalab04-30:~$ hdfs dfs -du -h /user/220968424/lab2
+12.3 M  37.0 M  /user/220968424/lab2/text.txt
+
+b.
+bdalab@mcalab04-30:~$ hdfs dfsadmin -report
+
+
+4.
+
+a.
+bdalab@mcalab04-30:~$ hdfs dfs -cat /user/220968424/lab2/text.txt | wc -l
+315811
+
+b.
+bdalab@mcalab04-30:~$ hdfs dfs -cat /user/220968424/lab2/text.txt | grep -o "the" | wc -l
+86130
+
+
+
+(b)
+
+bdalab@mcalab04-30:~$ cat /home/bdalab/220968424/week2/text.txt |python3 /home/bdalab/220968424/week2/mapper.py
+
+bdalab@mcalab04-30:~$ cat /home/bdalab/220968424/week2/text.txt |python3 /home/bdalab/220968424/week2/mapper.py|sort|python3 /home/bdalab/220968424/week2/reducer.py
+a	51040
+adversaries,	19140
+alarums	38280
+all	22330
+am	28710
+...
+
+
+(i)
+bdalab@mcalab04-30:~$ hdfs dfs -put /home/bdalab/220968424/week2/text.txt /user/220968424/lab2
+
+(ii)
+bdalab@mcalab04-30:~$ hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.4.1.jar wordcount /user/220968424/lab2/text.txt /user/220968424/lab2/output
+
+(iii)
+bdalab@mcalab04-30:~$ hdfs dfs -cat /user/220968424/lab2/output/part-r-00000
+And	38280
+But	9570
+Grim-visaged	9570
+He	15950
+I,	38280
+...
+
+
+
+1.
+
+bdalab@mcalab04-30:~$ cat /home/bdalab/220968424/week2/text.txt |python3 /home/bdalab/220968424/week2/mapper.py|sort|python3 /home/bdalab/220968424/week2/reducer.py
+a	51040
+adversaries,	19140
+alarums	38280
+all	22330
+am	28710
+...
+
+
+2.
+
+bdalab@mcalab04-30:~$ python3 /home/bdalab/220968424/week2/matrix.py
+Matrix A:
+[10, 20, 30]
+[40, 50, 60]
+[70, 80, 90]
+
+Matrix B:
+[1, 2, 3]
+[4, 5, 6]
+[7, 8, 9]
+
+Matrix A + Matrix B:
+[11, 22, 33]
+[44, 55, 66]
+[77, 88, 99]
+
+Matrix A - Matrix B:
+[9, 18, 27]
+[36, 45, 54]
+[63, 72, 81]
+
+Matrix A * Matrix B:
+[300, 360, 420]
+[660, 810, 960]
+[1020, 1260, 1500]
+
+Transpose of Matrix A:
+[10, 40, 70]
+[20, 50, 80]
+[30, 60, 90]
+
+Transpose of Matrix B:
+[1, 4, 7]
+[2, 5, 8]
+[3, 6, 9]
+
+
+3.
+
+bdalab@mcalab04-30:~$ python3 /home/bdalab/220968424/week2/sortStudents.py
+Sorted Student Data by Name:
+1002, alice, 78
+
+1003, bob, 88
+
+1004, charlie, 92
+
+1005, eve, 60
+
+1006, frank, 55
+
+1007, grace, 99
+
+...
+

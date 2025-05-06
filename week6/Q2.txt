@@ -1,0 +1,132 @@
+bdalab@mcalab04-30:~/220968424/week6$ hdfs dfs -put movie_ratings.csv /user/220968424/lab6
+
+hive> CREATE DATABASE movies;
+OK
+Time taken: 0.113 seconds
+
+hive> use movies;
+OK
+Time taken: 0.017 seconds
+
+a)
+
+hive> CREATE TABLE IF NOT EXISTS movie_ratings (
+    >     movie_id INT,
+    >     title STRING,
+    >     genre STRING,
+    >     release_year INT,
+    >     user_id INT,
+    >     rating FLOAT,
+    >     review_timestamp STRING
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.306 seconds
+
+hive> LOAD DATA INPATH '/user/220968424/lab6/movie_ratings.csv' INTO TABLE movie_ratings;
+Loading data to table movies.movie_ratings
+OK
+Time taken: 0.383 seconds
+
+b)
+
+hive> SELECT title, rating
+    > FROM movie_ratings
+    > ORDER BY rating DESC
+    > LIMIT 5;
+...
+OK
+The Dark Knight	9.0
+Inception	8.8
+Interstellar	8.6
+Parasite	8.6
+Spirited Away	8.6
+Time taken: 15.92 seconds, Fetched: 5 row(s)
+
+c)
+
+hive> SELECT genre, AVG(rating) AS avg_rating
+    > FROM movie_ratings
+    > GROUP BY genre
+    > ORDER BY avg_rating DESC
+    > LIMIT 1;
+...
+OK
+Sci-Fi	8.700000286102295
+Time taken: 34.896 seconds, Fetched: 1 row(s)
+
+d)
+
+hive> SELECT YEAR(CAST(review_timestamp AS TIMESTAMP)) AS review_year, AVG(rating) AS avg_rating
+    > FROM movie_ratings
+    > GROUP BY YEAR(CAST(review_timestamp AS TIMESTAMP))
+    > ORDER BY review_year;
+...
+OK
+2024	8.666666825612387
+Time taken: 35.518 seconds, Fetched: 1 row(s)
+
+e)
+
+hive> SET hive.exec.dynamic.partition = true;
+hive> SET hive.exec.dynamic.partition.mode = nonstrict;
+
+CREATE TABLE IF NOT EXISTS movie_ratings_partitioned (
+    movie_id INT,
+    title STRING,
+    release_year INT,
+    user_id INT,
+    rating FLOAT,
+    review_timestamp STRING
+)
+PARTITIONED BY (genre STRING)
+STORED AS TEXTFILE;
+
+hive> INSERT INTO movie_ratings_partitioned PARTITION (release_year, genre)
+    > SELECT movie_id, title, release_year, user_id, rating, review_timestamp, genre, release_year, genre
+    > FROM movie_ratings;
+...
+OK
+Time taken: 16.758 seconds
+
+hive> SELECT *
+    > FROM movie_ratings_partitioned
+    > WHERE genre = 'Sci-Fi';
+OK
+102	Inception	2010	5002	8.8	2024-01-01 14:00:00	Sci-Fi
+104	Interstellar	2014	5004	8.6	2024-01-03 10:30:00	Sci-Fi
+Time taken: 0.139 seconds, Fetched: 2 row(s)
+
+f)
+
+hive> CREATE TABLE IF NOT EXISTS movie_ratings_bucketed (
+    >     movie_id INT,
+    >     title STRING,
+    >     genre STRING,
+    >     release_year INT,
+    >     user_id INT,
+    >     rating FLOAT,
+    >     review_timestamp STRING
+    > )
+    > CLUSTERED BY (release_year) INTO 5 BUCKETS
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.055 seconds
+
+hive> INSERT INTO movie_ratings_bucketed
+    > SELECT movie_id, title, genre, release_year, user_id, rating, review_timestamp
+    > FROM movie_ratings;
+...
+OK
+Time taken: 39.36 seconds
+
+hive> SELECT movie_id, title, rating
+    > FROM movie_ratings_bucketed
+    > WHERE release_year = 2019;
+OK
+105	Avengers: Endgame	8.4
+103	Parasite	8.6
+Time taken: 0.112 seconds, Fetched: 2 row(s)
+

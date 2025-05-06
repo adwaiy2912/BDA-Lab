@@ -1,0 +1,68 @@
+bdalab@mcalab04-30:~/220968424/week6$ pyspark
+
+
+>>> rdd = spark.sparkContext.parallelize([1, 2, 3, 4, 5])
+
+>>> print(rdd.collect())
+[1, 2, 3, 4, 5]
+
+>>> rdd_transformed = rdd.map(lambda x: x * 2)
+
+>>> print(rdd_transformed.collect())
+[2, 4, 6, 8, 10]
+
+>>> from pyspark.sql import SparkSession
+
+>>> spark = SparkSession.builder.appName("DataFrame Example").getOrCreate()
+
+>>> df = spark.read.csv("sample_data.csv", header=True, inferSchema=True)
+
+>>> df.show()
++---+-----+---+-------+------+
+| id| name|age|   dept|salary|
++---+-----+---+-------+------+
+|101| John| 30|     HR| 50000|
+|102|Alice| 25|     IT| 60000|
+|103|  Bob| 35|Finance| 70000|
+|104|  Joy| 36|Manager| 55000|
++---+-----+---+-------+------+
+
+>>> df.select("name", "age").show()
++-----+---+
+| name|age|
++-----+---+
+| John| 30|
+|Alice| 25|
+|  Bob| 35|
+|  Joy| 36|
++-----+---+
+
+>>> df.filter(df.age > 30).show()
++---+----+---+-------+------+
+| id|name|age|   dept|salary|
++---+----+---+-------+------+
+|103| Bob| 35|Finance| 70000|
+|104| Joy| 36|Manager| 55000|
++---+----+---+-------+------+
+
+>>> df.write.csv("output_data.csv", header=True)
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -mkdir /user/220968424/lab9
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -put sample.txt /user/220968424/lab9
+
+bdalab@mcalab04-30:~/220968424/week9$ spark-submit spark_word_count.py
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -ls /user/220968424/lab9/output0
+Found 2 items
+-rw-r--r--   3 bdalab supergroup          0 2025-03-19 16:24 /user/220968424/lab9/output0/_SUCCESS
+-rw-r--r--   3 bdalab supergroup       2571 2025-03-19 16:24 /user/220968424/lab9/output0/part-00000
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output0/part-00000
+('In', 1)
+('a', 12)
+('quiet', 2)
+('town', 3)
+('nestled', 1)
+...
+

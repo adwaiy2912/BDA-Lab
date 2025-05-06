@@ -1,0 +1,9 @@
+bdalab@mcalab04-30:~/220968424/week10$ hdfs dfs -mkdir /user/220968424/lab10
+
+bdalab@mcalab04-30:~/220968424/week10$ hdfs dfs -put company_ml_data.csv /user/220968424/lab10
+
+bdalab@mcalab04-30:~/220968424/week10$ hdfs dfs -ls /user/220968424/lab10
+Found 1 items
+-rw-r--r--   1 bdalab supergroup      33868 2025-03-26 16:12 /user/220968424/lab10/company_ml_data.csv
+
+bdalab@mcalab04-30:~/220968424/week10$ spark-submit 10companydataML.py

@@ -1,0 +1,43 @@
+bdalab@mcalab04-30:~/220968424/week4$ cat inverted_index_data.txt | python3 mapper3.py
+hadoop	Doc1
+mapreduce	Doc1
+is	Doc1
+powerful	Doc1
+mapreduce	Doc2
+is	Doc2
+scalable	Doc2
+hadoop	Doc3
+and	Doc3
+spark	Doc3
+are	Doc3
+popular	Doc3
+
+
+bdalab@mcalab04-30:~/220968424/week4$ cat inverted_index_data.txt | python3 mapper3.py | python3 reducer3.py
+hadoop	Doc1,Doc3
+mapreduce	Doc1,Doc2
+is	Doc1,Doc2
+powerful	Doc1
+scalable	Doc2
+and	Doc3
+spark	Doc3
+are	Doc3
+popular	Doc3
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -put inverted_index_data.txt /user/220968424/lab4
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.4.1.jar -file mapper3.py -mapper 'python3 mapper3.py' -file ./reducer3.py -reducer 'python3 reducer3.py' -input /user/220968424/lab4/inverted_index_data.txt -output /user/220968424/lab4/output3
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -cat /user/220968424/lab4/output3/part-00000
+and	Doc3
+are	Doc3
+hadoop	Doc1,Doc3
+is	Doc1,Doc2
+mapreduce	Doc1,Doc2
+popular	Doc3
+powerful	Doc1
+scalable	Doc2
+spark	Doc3

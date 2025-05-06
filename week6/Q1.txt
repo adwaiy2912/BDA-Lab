@@ -1,0 +1,136 @@
+bdalab@mcalab04-30:~/220968424/week6$ hdfs dfs -put sales_data.csv /user/220968424/lab6
+
+hive> CREATE DATABASE logs;
+OK
+Time taken: 0.025 seconds
+
+hive> use logs;
+OK
+Time taken: 0.015 seconds
+
+a)
+
+hive> CREATE TABLE IF NOT EXISTS weblogs (
+    >     log_id INT,
+    >     ip_address STRING,
+    >     url STRING,
+    >     status_code INT,
+    >     response_time STRING,
+    >     log_date STRING
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.036 seconds'
+
+hive> LOAD DATA INPATH '/user/220968424/lab6/weblogs.csv' INTO TABLE weblogs;
+Loading data to table logs.weblogs
+OK
+Time taken: 0.073 seconds
+
+
+b)
+
+hive> SELECT url, COUNT(*) AS visit_count
+    > FROM weblogs
+    > GROUP BY url
+    > ORDER BY visit_count DESC;
+...
+OK
+ url	1
+ /product	1
+ /home	1
+ /checkout	1
+Time taken: 33.652 seconds, Fetched: 4 row(s)
+
+
+c)
+
+hive> SELECT HOUR(CAST(log_date AS TIMESTAMP)) AS hour, COUNT(*) AS request_count
+    > FROM weblogs
+    > GROUP BY HOUR(CAST(log_date AS TIMESTAMP))
+    > ORDER BY request_count DESC;
+...
+OK
+0	3
+NULL	1
+Time taken: 34.493 seconds, Fetched: 2 row(s)
+
+
+d)
+
+hive> SELECT * 
+    > FROM weblogs
+    > WHERE status_code = 404;
+OK
+2	192.168.1.2	/product	404	60ms	2024-01-01
+Time taken: 0.136 seconds, Fetched: 1 row(s)
+
+e)
+
+hive> SET hive.exec.dynamic.partition = true;
+hive> SET hive.exec.dynamic.partition.mode = nonstrict;
+
+hive> CREATE EXTERNAL TABLE IF NOT EXISTS weblogs_partitioned (
+    >   log_id INT,
+    >   ip_address STRING,
+    >   status_code INT,
+    >   response_time STRING,
+    >   url STRING
+    > )
+    > PARTITIONED BY (year INT)
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.04 seconds
+
+hive> INSERT INTO weblogs_partitioned PARTITION (year)
+    > SELECT 
+    >   log_id,
+    >   ip_address,
+    >   status_code,
+    >   response_time,
+    >   url,
+    >   YEAR(TO_DATE(log_date)) AS year
+    > FROM weblogs;
+...
+OK
+Time taken: 17.294 seconds
+
+hive> show partitions weblogs_partitioned;
+OK
+year=2024
+
+f)
+
+hive> SET hive.enforce.bucketing = true;
+
+hive> CREATE EXTERNAL TABLE IF NOT EXISTS weblogs_bucketed (
+    >     log_id INT,
+    >     ip_address STRING,
+    >     response_time STRING,
+    >     url STRING,
+    >     status_code INT
+    > )
+    > CLUSTERED BY (status_code) INTO 5 BUCKETS
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.038 seconds
+
+hive> INSERT INTO TABLE weblogs_bucketed
+    > SELECT log_id, ip_address, response_time, url, status_code
+    > FROM weblogs;
+...
+OK
+Time taken: 39.717 seconds
+
+hive> SELECT * 
+    > FROM weblogs_bucketed
+    > WHERE status_code = 404;
+OK
+2	192.168.1.2	60ms	/product	404
+Time taken: 0.07 seconds, Fetched: 1 row(s)
+
+

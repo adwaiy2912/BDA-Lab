@@ -1,0 +1,34 @@
+bdalab@mcalab04-30:~/220968424/week3$ cat record_data.txt |python3 mapper3.py
+RENTI	58
+FBXYXBG	90
+LSZTH	85
+ZDGH	61
+HFEGDM	75
+TQGQQP	57
+...
+
+
+bdalab@mcalab04-30:~/220968424/week3$ cat record_data.txt |python3 mapper3.py |python3 reducer3.py
+DSBNBG	99
+DXLAZOV	99
+QKEPF	99
+
+
+bdalab@mcalab04-30:~/220968424/week3$ hdfs dfs -put record_data.txt /user/220968424/lab3
+
+
+
+3.
+
+bdalab@mcalab04-30:~/220968424/week3$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.4.1.jar -file mapper3.py -mapper mapper3.py -file reducer3.py -reducer reducer3.py -input /user/220968424/lab3/record_data.txt -output /user/220968424/lab3/output3
+
+
+bdalab@mcalab04-30:~/220968424/week3$ hdfs dfs -cat /user/220968424/lab3/output3/part-00000
+DSBNBG	99
+DXLAZOV	99
+HCBFBFKW	99
+LQTK	99
+QKEPF	99
+ICEOBUM	98
+RLSAIGP	98
+...

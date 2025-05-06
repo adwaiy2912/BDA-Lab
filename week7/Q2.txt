@@ -1,0 +1,128 @@
+a)
+
+
+hbase:093:0> create 'library', 'book_info', 'availability'
+2025-03-19 15:45:37,594 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:postOperationResult(3599)) - Operation: CREATE, Table Name: default:library, procId: 76 completed
+Created table library
+Took 2.1314 seconds                                                                                  
+=> Hbase::Table - library
+
+
+b)
+
+
+hbase:094:0> put 'library', 'B001', 'book_info:title', 'The Catcher in the Rye'
+Took 0.0093 seconds                                                                                  
+hbase:095:0> put 'library', 'B001', 'book_info:author', 'J.D. Salinger'
+Took 0.0022 seconds                                                                                  
+hbase:096:0> put 'library', 'B001', 'book_info:genre', 'Fiction'
+Took 0.0021 seconds                                                                                  
+hbase:097:0> put 'library', 'B001', 'availability:status', 'Available'
+Took 0.0029 seconds                                                                                  
+hbase:098:0> put 'library', 'B001', 'availability:borrower', ''
+Took 0.0018 seconds                                                                                  
+hbase:099:0> 
+hbase:100:0> put 'library', 'B002', 'book_info:title', 'To Kill a Mockingbird'
+Took 0.0020 seconds                                                                                  
+hbase:101:0> put 'library', 'B002', 'book_info:author', 'Harper Lee'
+Took 0.0024 seconds                                                                                  
+hbase:102:0> put 'library', 'B002', 'book_info:genre', 'Fiction'
+Took 0.0031 seconds                                                                                  
+hbase:103:0> put 'library', 'B002', 'availability:status', 'Available'
+Took 0.0024 seconds                                                                                  
+hbase:104:0> put 'library', 'B002', 'availability:borrower', ''
+Took 0.0034 seconds                                                                                  
+hbase:105:0> 
+hbase:106:0> put 'library', 'B003', 'book_info:title', '1984'
+Took 0.0025 seconds                                                                                  
+hbase:107:0> put 'library', 'B003', 'book_info:author', 'George Orwell'
+Took 0.0025 seconds                                                                                  
+hbase:108:0> put 'library', 'B003', 'book_info:genre', 'Dystopian'
+Took 0.0034 seconds                                                                                  
+hbase:109:0> put 'library', 'B003', 'availability:status', 'Available'
+Took 0.0028 seconds                                                                                  
+hbase:110:0> put 'library', 'B003', 'availability:borrower', ''
+Took 0.0020 seconds                                                                                  
+hbase:111:0> 
+hbase:112:0> put 'library', 'B004', 'book_info:title', 'Moby Dick'
+Took 0.0025 seconds                                                                                  
+hbase:113:0> put 'library', 'B004', 'book_info:author', 'Herman Melville'
+Took 0.0022 seconds                                                                                  
+hbase:114:0> put 'library', 'B004', 'book_info:genre', 'Adventure'
+Took 0.0017 seconds                                                                                  
+hbase:115:0> put 'library', 'B004', 'availability:status', 'Available'
+Took 0.0022 seconds                                                                                  
+hbase:116:0> put 'library', 'B004', 'availability:borrower', ''
+Took 0.0020 seconds 
+
+
+c)
+
+
+hbase:117:0> get 'library', 'B002'
+COLUMN                     CELL                                                                      
+ availability:borrower     timestamp=2025-03-19T15:45:59.328, value=                                 
+ availability:status       timestamp=2025-03-19T15:45:59.315, value=Available                        
+ book_info:author          timestamp=2025-03-19T15:45:59.292, value=Harper Lee                       
+ book_info:genre           timestamp=2025-03-19T15:45:59.304, value=Fiction                          
+ book_info:title           timestamp=2025-03-19T15:45:59.282, value=To Kill a Mockingbird            
+1 row(s)
+Took 0.0128 seconds
+
+
+d)
+
+
+hbase:118:0> scan 'library', {FILTER => "SingleColumnValueFilter('availability', 'status', =, 'binary:Available')"}
+ROW                        COLUMN+CELL                                                               
+ B001                      column=availability:borrower, timestamp=2025-03-19T15:45:59.267, value=   
+ B001                      column=availability:status, timestamp=2025-03-19T15:45:59.257, value=Avail
+                           able                                                                      
+ B001                      column=book_info:author, timestamp=2025-03-19T15:45:59.236, value=J.D. Sal
+                           inger                                                                     
+ B001                      column=book_info:genre, timestamp=2025-03-19T15:45:59.247, value=Fiction  
+ B001                      column=book_info:title, timestamp=2025-03-19T15:45:59.223, value=The Catch
+                           er in the Rye                                                             
+ B002                      column=availability:borrower, timestamp=2025-03-19T15:45:59.328, value=   
+ B002                      column=availability:status, timestamp=2025-03-19T15:45:59.315, value=Avail
+                           able                                                                      
+ B002                      column=book_info:author, timestamp=2025-03-19T15:45:59.292, value=Harper L
+                           ee                                                                        
+ B002                      column=book_info:genre, timestamp=2025-03-19T15:45:59.304, value=Fiction  
+ B002                      column=book_info:title, timestamp=2025-03-19T15:45:59.282, value=To Kill a
+                            Mockingbird                                                              
+ B003                      column=availability:borrower, timestamp=2025-03-19T15:45:59.393, value=   
+ B003                      column=availability:status, timestamp=2025-03-19T15:45:59.383, value=Avail
+                           able                                                                      
+ B003                      column=book_info:author, timestamp=2025-03-19T15:45:59.360, value=George O
+                           rwell                                                                     
+ B003                      column=book_info:genre, timestamp=2025-03-19T15:45:59.370, value=Dystopian
+ B003                      column=book_info:title, timestamp=2025-03-19T15:45:59.349, value=1984     
+ B004                      column=availability:borrower, timestamp=2025-03-19T15:45:59.442, value=   
+ B004                      column=availability:status, timestamp=2025-03-19T15:45:59.433, value=Avail
+                           able                                                                      
+ B004                      column=book_info:author, timestamp=2025-03-19T15:45:59.416, value=Herman M
+                           elville                                                                   
+ B004                      column=book_info:genre, timestamp=2025-03-19T15:45:59.424, value=Adventure
+ B004                      column=book_info:title, timestamp=2025-03-19T15:45:59.407, value=Moby Dick
+4 row(s)
+Took 0.0167 seconds
+
+
+e)
+
+
+hbase:119:0> put 'library', 'B003', 'availability:status', 'Borrowed'
+Took 0.0023 seconds                                                                                  
+hbase:120:0> put 'library', 'B003', 'availability:borrower', 'Michael'
+Took 0.0024 seconds
+
+
+f)
+
+
+hbase:121:0> count 'library'
+4 row(s)
+Took 0.0089 seconds                                                                                  
+=> 4
+

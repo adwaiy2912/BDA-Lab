@@ -1,0 +1,28 @@
+Q2.
+
+a)
+bdalab@mcalab04-30:~$ hdfs dfs -rm /user/test/testing
+Deleted /user/test/testing
+
+b)
+bdalab@mcalab04-30:~$ hdfs dfs -cat /user/test/a.txt
+hi my name is
+
+
+c)
+bdalab@mcalab04-30:~$ hdfs dfs -get /user/test/a.txt b.txt
+
+d)
+bdalab@mcalab04-30:~$ hdfs dfs -cp /user/test/a.txt /user/test/b.txt
+
+e)
+bdalab@mcalab04-30:~$ hdfs dfs -mv /user/test/b.txt /user/bdalab/b.txt
+
+f)\
+bdalab@mcalab04-30:~$ hdfs dfs -rm /user/bdalab/b.txt
+Deleted /user/bdalab/b.txt
+
+g)
+bdalab@mcalab04-30:~$ hdfs dfs -ls /user/test/a.txt
+-rw-r--r--   1 bdalab supergroup         23 2025-01-08 15:20 /user/test/a.txt
+

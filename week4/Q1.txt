@@ -1,0 +1,33 @@
+bdalab@mcalab04-30:~/220968424/week4$ cat student_data.txt course_data.txt | python3 mapper1.py
+CS101	S	STU101,John
+CS102	S	STU102,Alice
+CS101	S	STU103,Bob
+CS103	S	STU104,Charlie
+CS102	S	STU105,Eve
+CS101	C	Introduction to Computer Science,V
+CS102	C	Data Structures,VI
+CS103	C	Algorithms,V
+
+
+bdalab@mcalab04-30:~/220968424/week4$ cat student_data.txt course_data.txt | python3 mapper1.py | python3 reducer1.py
+STU101, John, CS101, Introduction to Computer Science,V
+STU103, Bob, CS101, Introduction to Computer Science,V
+STU102, Alice, CS102, Data Structures,VI
+STU105, Eve, CS102, Data Structures,VI
+STU104, Charlie, CS103, Algorithms,V
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -put course_data.txt /user/220968424/lab4
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -put student_data.txt /user/220968424/lab4
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.4.1.jar -file mapper1.py -mapper 'python3 mapper1.py' -file ./reducer1.py -reducer 'python3 reducer1.py' -input /user/220968424/lab4/student_data.txt -input /user/220968424/lab4/course_data.txt -output /user/220968424/lab4/output1
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -cat /user/220968424/lab4/output1/part-00000
+STU103, Bob, CS101, Introduction to Computer Science,V	
+STU101, John, CS101, Introduction to Computer Science,V	
+STU105, Eve, CS102, Data Structures,VI	
+STU102, Alice, CS102, Data Structures,VI	
+STU104, Charlie, CS103, Algorithms,V

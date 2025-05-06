@@ -1,0 +1,4 @@
+CS101,Introduction to Computer Science,V
+CS102,Data Structures,VI
+CS103,Algorithms,V
+

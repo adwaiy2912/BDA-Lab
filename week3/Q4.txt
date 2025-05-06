@@ -1,0 +1,42 @@
+bdalab@mcalab04-30:~/220968424/week3$ cat keyVal_data.txt |python3 mapper4.py
+S	60
+G	79
+X	67
+H	95
+O	49
+T	73
+M	39
+X	90
+...
+
+
+
+bdalab@mcalab04-30:~/220968424/week3$ cat keyVal_data.txt | python3 mapper4.py | sort | python3 reducer4.py
+A	2.00
+B	42.50
+C	36.80
+D	32.80
+E	45.00
+F	44.20
+G	57.83
+
+
+bdalab@mcalab04-30:~/220968424/week3$ hdfs dfs -put keyVal_data.txt /user/220968424/lab3
+
+
+
+4.
+
+bdalab@mcalab04-30:~/220968424/week3$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.4.1.jar -file mapper4.py -mapper mapper4.py -file reducer4.py -reducer reducer4.py -input /user/220968424/lab3/keyVal_data.txt -output /user/220968424/lab3/output4
+
+
+bdalab@mcalab04-30:~/220968424/week3$ hdfs dfs -cat /user/220968424/lab3/output4/part-00000
+A	2.00
+B	42.50
+C	36.80
+D	32.80
+E	45.00
+F	44.20
+G	57.83
+...
+

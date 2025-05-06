@@ -1,0 +1,21 @@
+1001, john, 45
+1002, alice, 78
+1003, bob, 88
+1004, charlie, 92
+1005, eve, 60
+1006, frank, 55
+1007, grace, 99
+1008, hanna, 72
+1009, isabelle, 85
+1010, jack, 64
+1011, kim, 58
+1012, lila, 76
+1013, mike, 91
+1014, nancy, 53
+1015, oscar, 80
+1016, patrick, 77
+1017, quincy, 69
+1018, robert, 82
+1019, sarah, 95
+1020, tim, 66
+

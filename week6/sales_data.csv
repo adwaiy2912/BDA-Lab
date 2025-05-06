@@ -1,0 +1,6 @@
+transaction_id,customer_id, product, category, amount, payment_type, transaction_date 
+1,101, Laptop, Electronics, 1200, Credit Card, 2023-01-05 
+2,102, Phone, Electronics, 800, PayPal, 2021-02-10 
+3,103, T-shirt, Clothing, 50, Debit Card, 2022-02-15 
+4,101, Headphones, Electronics, 150, Credit Card, 2023-03-01 
+5,104, Shoes, Footwear, 120, Cash, 2022-03-20

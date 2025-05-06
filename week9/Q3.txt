@@ -1,0 +1,35 @@
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -put sales_data.csv /user/220968424/lab9
+
+bdalab@mcalab04-30:~/220968424/week9$ spark-submit spark_sales.py
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output3/a_loaded_data/part-00000-71ec770c-f2e2-4c48-8316-56f8c3962acc-c000.csv
+TransactionID,Date,Product,Category,Price,Quantity
+1001,2024-03-01,Laptop,Electronics,800,5
+1002,2024-03-02,Smartphone,Electronics,500,10
+1003,2024-03-03,Headphones,Accessories,50,15
+1004,2024-03-04,Monitor,Electronics,300,7
+1005,2024-03-05,Mouse,Accessories,25,20
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output3/b_total_revenue/part-00000-6327f54f-1718-47fd-9c36-1dec1dc78b14-c000.csv
+Product,Revenue
+Laptop,4000
+Smartphone,5000
+Headphones,750
+Monitor,2100
+Mouse,500
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output3/c_highest_selling/part-00000-e78b30b6-b9fa-46be-bb46-1449cfa562ce-c000.csv
+TransactionID,Date,Product,Category,Price,Quantity,Revenue
+1002,2024-03-02,Smartphone,Electronics,500,10,5000
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output3/d_filtered_sales/part-00000-69b2f728-ce27-4e21-aaba-28b595aec713-c000.csv   
+TransactionID,Date,Product,Category,Price,Quantity,Revenue
+1001,2024-03-01,Laptop,Electronics,800,5,4000
+1002,2024-03-02,Smartphone,Electronics,500,10,5000
+1003,2024-03-03,Headphones,Accessories,50,15,750
+1004,2024-03-04,Monitor,Electronics,300,7,2100
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output3/e_category_revenue/part-00000-9fc06d8a-ff46-4ef8-bfab-d4963279bc24-c000.csv
+Category,Total_Revenue
+Electronics,11100
+Accessories,1250

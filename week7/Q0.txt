@@ -1,0 +1,130 @@
+bdalab@mcalab04-30:/$ cd /usr/local/hbase
+
+bdalab@mcalab04-30:/usr/local/hbase$ bin/start-hbase.sh
+
+bdalab@mcalab04-30:/usr/local/hbase$ jps
+19250 HQuorumPeer
+3379 ResourceManager
+3539 NodeManager
+2661 NameNode
+19430 HMaster
+2871 DataNode
+19687 HRegionServer
+20299 Jps
+3117 SecondaryNameNode
+
+bdalab@mcalab04-30:/usr/local/hbase$ ./bin/hbase shell
+
+
+hbase:011:0> create 'students', 'info', 'contact'
+2025-03-19 15:31:45,502 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:postOperationResult(3599)) - Operation: CREATE, Table Name: default:students, procId: 39 completed
+Created table students
+Took 0.6367 seconds                                                                                  
+=> Hbase::Table - students
+
+hbase:012:0> put 'students', '1', 'info:name', 'Alice'
+Took 0.0271 seconds
+               
+hbase:013:0> put 'students', '1', 'info:age', '22'
+Took 0.0039 seconds
+                                                                                  
+hbase:014:0> put 'students', '1', 'contact:email', 'alice@gmail.com'
+Took 0.0052 seconds
+                                                                                  
+hbase:015:0> get 'students', '1'
+COLUMN                     CELL                                                                      
+ contact:email             timestamp=2025-03-19T15:32:07.426, value=alice@gmail.com                  
+ info:age                  timestamp=2025-03-19T15:32:01.096, value=22                               
+ info:name                 timestamp=2025-03-19T15:31:55.438, value=Alice                            
+1 row(s)
+Took 0.0175 seconds
+
+hbase:018:0> scan 'students'
+ROW                        COLUMN+CELL                                                               
+ 1                         column=contact:email, timestamp=2025-03-19T15:32:07.426, value=alice@gmail
+                           .com                                                                      
+ 1                         column=info:age, timestamp=2025-03-19T15:32:01.096, value=22              
+ 1                         column=info:name, timestamp=2025-03-19T15:31:55.438, value=Alice          
+1 row(s)
+Took 0.0057 seconds       
+                                                                           
+hbase:019:0> put 'students', '1', 'contact:email', 'alice_new@gmail.com'
+Took 0.0034 seconds          
+                                                                        
+hbase:020:0> delete 'students', '1', 'contact:email'
+Took 0.0055 seconds         
+                                                                         
+hbase:021:0> deleteall 'students', '1'
+Took 0.0045 seconds
+
+hbase:024:0> disable 'students'
+2025-03-19 15:34:47,038 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:rpcCall(927)) - Started disable of students
+2025-03-19 15:34:48,165 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:postOperationResult(3599)) - Operation: DISABLE, Table Name: default:students, procId: 42 completed
+Took 1.1342 seconds         
+                                                                         
+hbase:025:0> is_disabled 'students'
+true                                                                                                 
+Took 0.0059 seconds                                                                                  
+=> true
+
+hbase:026:0> enable 'students'
+2025-03-19 15:35:08,996 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:rpcCall(867)) - Started enable of students
+2025-03-19 15:35:09,629 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:postOperationResult(3599)) - Operation: ENABLE, Table Name: default:students, procId: 45 completed
+Took 0.6436 seconds        
+                                                                          
+hbase:027:0> is_enabled 'students'
+true                                                                                                 
+Took 0.0041 seconds                                                                                  
+=> true
+
+hbase:028:0> describe 'students'
+Table students is ENABLED                                                                            
+students, {TABLE_ATTRIBUTES => {METADATA => {'hbase.store.file-tracker.impl' => 'DEFAULT'}}}         
+COLUMN FAMILIES DESCRIPTION                                                                          
+{NAME => 'contact', INDEX_BLOCK_ENCODING => 'NONE', VERSIONS => '1', KEEP_DELETED_CELLS => 'FALSE', D
+ATA_BLOCK_ENCODING => 'NONE', TTL => 'FOREVER', MIN_VERSIONS => '0', REPLICATION_SCOPE => '0', BLOOMF
+ILTER => 'ROW', IN_MEMORY => 'false', COMPRESSION => 'NONE', BLOCKCACHE => 'true', BLOCKSIZE => '6553
+6 B (64KB)'}                                                                                         
+
+{NAME => 'info', INDEX_BLOCK_ENCODING => 'NONE', VERSIONS => '1', KEEP_DELETED_CELLS => 'FALSE', DATA
+_BLOCK_ENCODING => 'NONE', TTL => 'FOREVER', MIN_VERSIONS => '0', REPLICATION_SCOPE => '0', BLOOMFILT
+ER => 'ROW', IN_MEMORY => 'false', COMPRESSION => 'NONE', BLOCKCACHE => 'true', BLOCKSIZE => '65536 B
+ (64KB)'}                                                                                            
+
+2 row(s)
+Quota is disabled
+Took 0.0206 seconds
+
+hbase:029:0> disable 'students'
+2025-03-19 15:36:13,999 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:rpcCall(927)) - Started disable of students
+2025-03-19 15:36:14,313 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:postOperationResult(3599)) - Operation: DISABLE, Table Name: default:students, procId: 48 completed
+Took 0.3227 seconds             
+                                                                     
+hbase:030:0> drop 'students'
+2025-03-19 15:36:20,162 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:postOperationResult(3599)) - Operation: DELETE, Table Name: default:students, procId: 51 completed
+Took 0.1186 seconds
+
+hbase:037:0> scan 'students', {FILTER => "SingleColumnValueFilter ('info', 'age', >=, 'binary:20')"}
+ROW                        COLUMN+CELL                                                               
+ 1                         column=contact:email, timestamp=2025-03-19T15:37:27.800, value=alice_new@g
+                           mail.com                                                                  
+ 1                         column=info:age, timestamp=2025-03-19T15:37:16.280, value=22              
+ 1                         column=info:name, timestamp=2025-03-19T15:37:10.874, value=Alice          
+1 row(s)
+Took 0.0288 seconds      
+                                                                            
+hbase:038:0> scan 'students', {FILTER => "PrefixFilter('2')"}
+ROW                        COLUMN+CELL                                                               
+0 row(s)
+Took 0.0108 seconds         
+                                                                         
+hbase:039:0> scan 'students', {FILTER => "PageFilter(1)"}
+ROW                        COLUMN+CELL                                                               
+ 1                         column=contact:email, timestamp=2025-03-19T15:37:27.800, value=alice_new@g
+                           mail.com                                                                  
+ 1                         column=info:age, timestamp=2025-03-19T15:37:16.280, value=22              
+ 1                         column=info:name, timestamp=2025-03-19T15:37:10.874, value=Alice          
+1 row(s)
+Took 0.0117 seconds
+
+

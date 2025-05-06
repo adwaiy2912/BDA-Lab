@@ -1,0 +1,37 @@
+bdalab@mcalab04-30:~/220968424/week3$ cat weather_data.txt |python3 mapper2.py
+2002	32
+2012	28
+2004	27
+2017	14
+2012	-3
+2004	4
+...
+
+
+bdalab@mcalab04-30:~/220968424/week3$ cat weather_data.txt |python3 mapper2.py|sort|python3 reducer2.py
+2001	27
+2002	32
+2003	18
+2004	27
+2006	21
+...
+
+
+bdalab@mcalab04-30:~/220968424/week3$ hdfs dfs -put weather_data.txt /user/220968424/lab3
+
+
+
+2.
+
+bdalab@mcalab04-30:~/220968424/week3$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.4.1.jar -file mapper2.py -mapper mapper2.py -file reducer2.py -reducer reducer2.py -input /user/220968424/lab3/weather_data.txt -output /user/220968424/lab3/output2
+
+
+bdalab@mcalab04-30:~/220968424/week3$ hdfs dfs -cat /user/220968424/lab3/output2/part-00000
+2000	30
+2001	33
+2002	34
+2003	33
+2004	34
+2005	33
+...
+

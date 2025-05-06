@@ -1,0 +1,138 @@
+bdalab@mcalab04-30:~/220968424/week6$ hdfs dfs -put flight_data.csv /user/220968424/lab6
+
+hive> CREATE DATABASE flight;
+OK
+Time taken: 0.028 seconds
+
+hive> use flight;
+OK
+Time taken: 0.015 seconds
+
+a)
+
+hive> CREATE TABLE IF NOT EXISTS flight_data (
+    >     flight_id INT,
+    >     airline STRING,
+    >     flight_number STRING,
+    >     origin STRING,
+    >     destination STRING,
+    >     departure_date STRING,
+    >     departure_time STRING,
+    >     arrival_time STRING,
+    >     delay_minutes INT,
+    >     status STRING
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.032 seconds
+
+hive> LOAD DATA INPATH '/user/220968424/lab6/flight_data.csv' INTO TABLE flight_data;
+Loading data to table flight.flight_data
+OK
+Time taken: 0.074 seconds
+
+b)
+
+hive> SELECT airline, SUM(delay_minutes) AS total_delay
+    > FROM flight_data
+    > WHERE delay_minutes > 0
+    > GROUP BY airline
+    > ORDER BY total_delay DESC
+    > LIMIT 1;
+...
+OK
+United	45
+Time taken: 39.182 seconds, Fetched: 1 row(s)
+
+c)
+
+hive> SELECT status, COUNT(*) AS flight_count
+    > FROM flight_data
+    > GROUP BY status;
+...
+OK
+Delayed	2
+On Time	3
+Time taken: 14.667 seconds, Fetched: 2 row(s)
+
+d)
+
+hive> SELECT airline, AVG(delay_minutes) AS avg_delay
+    > FROM flight_data
+    > WHERE delay_minutes > 0
+    > GROUP BY airline;
+...
+OK
+Delta	10.0
+JetBlue	5.0
+Southwest	30.0
+United	45.0
+Time taken: 16.708 seconds, Fetched: 4 row(s)
+
+e)
+
+hive> SET hive.exec.dynamic.partition = true;
+hive> SET hive.exec.dynamic.partition.mode = nonstrict;
+
+hive> CREATE TABLE IF NOT EXISTS flight_data_partitioned (
+    >     flight_id INT,
+    >     airline STRING,
+    >     flight_number STRING,
+    >     origin STRING,
+    >     destination STRING,
+    >     departure_time STRING,
+    >     arrival_time STRING,
+    >     delay_minutes INT,
+    >     status STRING
+    > )
+    > PARTITIONED BY (departure_date STRING)
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.094 seconds
+
+hive> INSERT INTO flight_data_partitioned PARTITION (departure_date)
+    > SELECT flight_id, airline, flight_number, origin, destination, departure_time, arrival_time, delay_minutes, status, departure_date
+    > FROM flight_data;
+...
+OK
+Time taken: 17.392 seconds
+
+hive> SELECT * FROM flight_data_partitioned WHERE departure_date = '2024-02-01';
+OK
+101	Delta	DL202	JFK	LAX	08:30	11:30	10	On Time	2024-02-01
+102	United	UA405	ORD	SFO	09:00	12:00	45	Delayed	2024-02-01
+Time taken: 0.151 seconds, Fetched: 2 row(s)
+
+f)
+
+hive> CREATE TABLE IF NOT EXISTS flight_data_bucketed (
+    >     flight_id INT,
+    >     flight_number STRING,
+    >     airline STRING,
+    >     origin STRING,
+    >     destination STRING,
+    >     departure_time STRING,
+    >     arrival_time STRING,
+    >     delay_minutes INT,
+    >     status STRING
+    > )
+    > CLUSTERED BY (airline) INTO 5 BUCKETS
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.208 seconds
+
+hive> INSERT INTO flight_data_bucketed
+    > SELECT flight_id, flight_number, airline, origin, destination, departure_time, arrival_time, delay_minutes, status
+    > FROM flight_data;
+...
+OK
+Time taken: 40.563 seconds
+
+hive> SELECT * FROM flight_data_bucketed
+    > WHERE airline = 'Delta';
+OK
+101	DL202	Delta	JFK	LAX	08:30	11:30	10	On Time
+Time taken: 0.073 seconds, Fetched: 1 row(s)
+

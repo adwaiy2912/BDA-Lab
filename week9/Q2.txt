@@ -1,0 +1,31 @@
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -put json_data.json /user/220968424/lab9
+
+bdalab@mcalab04-30:~/220968424/week9$ spark-submit spark_json.py
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output2/a_raw_data_json/part-00000-a94fcf1f-b62c-40cd-9a89-7edcdffa28de-c000.json
+{"_corrupt_record":"["}
+{"age":25,"city":"New York","name":"Alice"}
+{"age":35,"city":"Los Angeles","name":"Bob"}
+{"age":40,"city":"Chicago","name":"Charlie"}
+{"age":22,"city":"New York","name":"David"}
+{"age":30,"city":"Los Angeles","name":"Eve"}
+{"_corrupt_record":"]"}
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output2/b_selected_data_json/part-00000-b29d88e7-e64d-4151-9b6b-e5c59c6ce0ec-c000.json
+{}
+{"name":"Alice","city":"New York"}
+{"name":"Bob","city":"Los Angeles"}
+{"name":"Charlie","city":"Chicago"}
+{"name":"David","city":"New York"}
+{"name":"Eve","city":"Los Angeles"}
+{}
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output2/c_filtered_data_json/part-00000-fd18964e-fb35-41f8-883f-abfd6aa1aaaa-c000.json
+{"age":35,"city":"Los Angeles","name":"Bob"}
+{"age":40,"city":"Chicago","name":"Charlie"}
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output2/d_grouped_data_json/part-00000-fc3d2c13-7dfb-42c7-ba9f-7a79dd61a107-c000.json
+{"city":"Los Angeles","count":2}
+{"count":2}
+{"city":"Chicago","count":1}
+{"city":"New York","count":2}

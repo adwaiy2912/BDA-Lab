@@ -1,0 +1,36 @@
+step-1 : done
+
+
+step-2
+
+
+bdalab@mcalab04-30:~$ hdfs dfs -mkdir /user/220968424/lab4
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -put 4s_input.txt /user/220968424/lab4
+
+bdalab@mcalab04-30:~/220968424/week4$ cat 4s_input.txt |python3 4s_mapper.py
+HR	6000	1, Eve
+HR	7000	2, Alice
+HR	8000	3, Charlie
+IT	9000	4, Bob
+IT	9500	5, Dave
+
+bdalab@mcalab04-30:~/220968424/week4$ cat 4s_input.txt |python3 4s_mapper.py|sort|python3 4s_reducer.py
+HR, 1, Eve
+HR, 2, Alice
+HR, 3, Charlie
+IT, 4, Bob
+IT, 5, Dave
+
+
+step-3
+
+
+bdalab@mcalab04-30:~/220968424/week4$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.4.1.jar -file ./4s_mapper.py -mapper 'python3 4s_mapper.py' -file ./4s_reducer.py -reducer 'python3 4s_reducer.py' -input /user/220968424/lab4/4s_input.txt -output /user/220968424/lab4/output0
+
+bdalab@mcalab04-30:~/220968424/week4$ hdfs dfs -cat /user/220968424/lab4/output0/part-00000
+HR, 1, Eve
+HR, 2, Alice
+HR, 3, Charlie
+IT, 4, Bob
+IT, 5, Dave

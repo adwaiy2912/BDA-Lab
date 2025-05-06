@@ -1,0 +1,26 @@
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -put server_log.txt /user/220968424/lab9
+
+bdalab@mcalab04-30:~/220968424/week9$ spark-submit spark_server_log.py
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output1/b_status_count/part-00000
+('200', 5)
+('302', 1)
+('404', 1)
+('500', 1)
+('403', 1)
+('201', 1)
+('503', 1)
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output1/c_top_ips/part-00000
+('192.168.1.1', 3)
+('192.168.1.2', 2)
+('192.168.1.3', 2)
+('192.168.1.4', 2)
+('192.168.1.5', 2)
+
+bdalab@mcalab04-30:~/220968424/week9$ hdfs dfs -cat /user/220968424/lab9/output1/d_error_logs/part-00000
+192.168.1.1 - - [08/Mar/2025:10:33:00 +0000] "GET /about.html HTTP/1.1" 404 256
+192.168.1.4 - - [08/Mar/2025:10:34:00 +0000] "GET /contact.html HTTP/1.1" 500 128
+192.168.1.3 - - [08/Mar/2025:10:37:00 +0000] "GET /login HTTP/1.1" 403 512
+192.168.1.1 - - [08/Mar/2025:10:40:00 +0000] "POST /upload HTTP/1.1" 503 256
+

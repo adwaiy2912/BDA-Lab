@@ -1,0 +1,186 @@
+bdalab@mcalab04-30:~/220968424/week6$ hdfs dfs -chmod 777 /tmp
+
+bdalab@mcalab04-30:~/220968424/week6$ cd /usr/local/hive
+bdalab@mcalab04-30:/usr/local/hive$ rm -rf metastore_db
+
+bdalab@mcalab04-30:/usr/local/hive$ bin/schematool -dbType derby -initSchema
+
+bdalab@mcalab04-30:/usr/local/hive$ bin/hive
+
+
+
+hive> CREATE DATABASE sales_db;
+OK
+Time taken: 0.102 seconds
+
+hive> SHOW DATABASES;
+OK
+default
+sales_db
+Time taken: 0.015 seconds, Fetched: 2 row(s)
+
+hive> USE sales_db;
+OK
+Time taken: 0.016 seconds
+
+hive> SHOW TABLES;
+OK
+Time taken: 0.025 seconds
+
+hive> DROP DATABASE sales_db CASCADE;
+OK
+Time taken: 0.129 seconds
+
+
+
+bdalab@mcalab04-30:~/220968424/week6$ hdfs dfs -mkdir /user/220968424/lab6
+bdalab@mcalab04-30:~/220968424/week6$ hdfs dfs -put sales_data.csv /user/220968424/lab6
+
+
+
+hive> CREATE DATABASE ecommerce;
+OK
+Time taken: 0.023 seconds
+
+hive> USE ecommerce;
+OK
+Time taken: 0.013 seconds
+
+a.
+
+hive> CREATE TABLE sales ( transaction_id INT, customer_id INT, product STRING, category
+    > STRING, amount FLOAT, payment_type STRING, transaction_date STRING ) ROW
+    > FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE;
+OK
+Time taken: 0.324 seconds
+
+hive> alter table sales set tblproperties ("skip.header.line.count"="1");
+OK
+Time taken: 0.146 seconds
+
+b.
+
+hive> LOAD DATA INPATH '/user/220968424/lab6/sales_data.csv' INTO TABLE sales;
+Loading data to table ecommerce.sales
+OK
+Time taken: 0.33 seconds
+
+hive> select * from sales;
+OK
+1	101	 Laptop	 Electronics	1200.0	 Credit Card	 2023-01-05 
+2	102	 Phone	 Electronics	800.0	 PayPal	 2021-02-10 
+3	103	 T-shirt	 Clothing	50.0	 Debit Card	 2022-02-15 
+4	101	 Headphones	 Electronics	150.0	 Credit Card	 2023-03-01 
+5	104	 Shoes	 Footwear	120.0	 Cash	 2022-03-20
+Time taken: 0.875 seconds, Fetched: 5 row(s)
+
+c.
+
+hive> SELECT SUM(amount) AS total_revenue FROM sales;
+...
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.4 sec   HDFS Read: 14426 HDFS Write: 106 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 400 msec
+OK
+2320.0
+Time taken: 17.924 seconds, Fetched: 1 row(s)
+
+d.
+
+hive> SELECT product, COUNT(*) AS sales_count
+    > FROM sales
+    > GROUP BY product
+    > ORDER BY sales_count DESC
+    > LIMIT 1;
+...
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.23 sec   HDFS Read: 13692 HDFS Write: 229 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 2.74 sec   HDFS Read: 7822 HDFS Write: 113 SUCCESS
+Total MapReduce CPU Time Spent: 6 seconds 970 msec
+OK
+ Headphones	1
+Time taken: 37.377 seconds, Fetched: 1 row(s)
+
+e. 
+
+hive> SELECT payment_type, COUNT(*) AS transaction_count
+    > FROM sales
+    > GROUP BY payment_type;
+...
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.35 sec   HDFS Read: 14718 HDFS Write: 182 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 350 msec
+OK
+ Cash	1
+ Credit Card	2
+ Debit Card	1
+ PayPal	1
+Time taken: 17.538 seconds, Fetched: 4 row(s)
+
+f.
+
+hive> SET hive.exec.dynamic.partition = true;
+
+hive> SET hive.exec.dynamic.partition.mode = nonstrict;
+
+hive> CREATE TABLE sales_partitioned (transaction_id INT, customer_id INT, product STRING,
+    > category STRING, amount FLOAT, payment_type STRING) PARTITIONED BY (year INT)
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.121 seconds
+
+hive> INSERT INTO sales_partitioned PARTITION (year) SELECT transaction_id, customer_id,
+    > product, category, amount, payment_type, YEAR(TO_DATE(transaction_date)) AS year FROM
+    > sales;
+...
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.78 sec   HDFS Read: 22678 HDFS Write: 1304 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 780 msec
+OK
+Time taken: 16.839 seconds
+
+hive> SHOW PARTITIONS sales_partitioned;
+OK
+year=2021
+year=2022
+year=2023
+Time taken: 0.048 seconds, Fetched: 3 row(s)
+
+hive> SELECT * FROM sales_partitioned WHERE year = 2023;
+OK
+1	101	 Laptop	 Electronics	1200.0	 Credit Card	2023
+4	101	 Headphones	 Electronics	150.0	 Credit Card	2023
+Time taken: 0.162 seconds, Fetched: 2 row(s)
+
+g.
+
+hive> CREATE TABLE retail_sales_bucketed (
+    > transaction_id INT,
+    > customer_id INT,
+    > product STRING,
+    > category STRING,
+    > amount FLOAT,
+    > payment_type STRING,
+    > transaction_date STRING
+    > )
+    > CLUSTERED BY (customer_id) INTO 4 BUCKETS STORED AS TEXTFILE;
+OK
+Time taken: 0.035 seconds
+
+hive> SET hive.enforce.bucketing = true;
+
+hive> INSERT OVERWRITE TABLE retail_sales_bucketed SELECT * FROM sales SORT BY customer_id;
+...
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 4   Cumulative CPU: 11.0 sec   HDFS Read: 49904 HDFS Write: 1908 SUCCESS
+Stage-Stage-3: Map: 1  Reduce: 1   Cumulative CPU: 4.33 sec   HDFS Read: 18100 HDFS Write: 487 SUCCESS
+Total MapReduce CPU Time Spent: 15 seconds 330 msec
+OK
+Time taken: 37.707 seconds
+
+hive> SELECT * FROM retail_sales_bucketed
+    > TABLESAMPLE(BUCKET 2 OUT OF 4 ON customer_id);
+OK
+2	102	 Phone	 Electronics	800.0	 PayPal	 2021-02-10 
+3	103	 T-shirt	 Clothing	50.0	 Debit Card	 2022-02-15 
+Time taken: 0.042 seconds, Fetched: 2 row(s)

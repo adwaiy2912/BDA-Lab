@@ -1,0 +1,147 @@
+a)
+
+
+hbase:122:0> create 'transactions', 'customer_info', 'transaction_details'
+2025-03-19 15:47:41,210 INFO  [main] client.HBaseAdmin (HBaseAdmin.java:postOperationResult(3599)) - Operation: CREATE, Table Name: default:transactions, procId: 79 completed
+Created table transactions
+Took 2.1241 seconds                                                                                  
+=> Hbase::Table - transactions
+
+
+b)
+
+
+hbase:123:0> put 'transactions', 'T001', 'customer_info:name', 'John Doe'
+Took 0.0056 seconds                                                                                  
+hbase:124:0> put 'transactions', 'T001', 'customer_info:email', 'john.doe@example.com'
+Took 0.0027 seconds                                                                                  
+hbase:125:0> put 'transactions', 'T001', 'transaction_details:amount', '5000'
+Took 0.0027 seconds                                                                                  
+hbase:126:0> put 'transactions', 'T001', 'transaction_details:mode', 'Credit Card'
+Took 0.0028 seconds                                                                                  
+hbase:127:0> put 'transactions', 'T001', 'transaction_details:date', '2025-03-01'
+Took 0.0035 seconds                                                                                  
+hbase:128:0> 
+hbase:129:0> put 'transactions', 'T002', 'customer_info:name', 'Jane Smith'
+Took 0.0018 seconds                                                                                  
+hbase:130:0> put 'transactions', 'T002', 'customer_info:email', 'jane.smith@example.com'
+Took 0.0020 seconds                                                                                  
+hbase:131:0> put 'transactions', 'T002', 'transaction_details:amount', '2000'
+Took 0.0020 seconds                                                                                  
+hbase:132:0> put 'transactions', 'T002', 'transaction_details:mode', 'Debit Card'
+Took 0.0021 seconds                                                                                  
+hbase:133:0> put 'transactions', 'T002', 'transaction_details:date', '2025-03-02'
+Took 0.0022 seconds                                                                                  
+hbase:134:0> 
+hbase:135:0> put 'transactions', 'T003', 'customer_info:name', 'Tom Harris'
+Took 0.0021 seconds                                                                                  
+hbase:136:0> put 'transactions', 'T003', 'customer_info:email', 'tom.harris@example.com'
+Took 0.0021 seconds                                                                                  
+hbase:137:0> put 'transactions', 'T003', 'transaction_details:amount', '3500'
+Took 0.0019 seconds                                                                                  
+hbase:138:0> put 'transactions', 'T003', 'transaction_details:mode', 'Credit Card'
+Took 0.0025 seconds                                                                                  
+hbase:139:0> put 'transactions', 'T003', 'transaction_details:date', '2025-03-03'
+Took 0.0020 seconds                                                                                  
+hbase:140:0> 
+hbase:141:0> put 'transactions', 'T004', 'customer_info:name', 'Emily Clark'
+Took 0.0020 seconds                                                                                  
+hbase:142:0> put 'transactions', 'T004', 'customer_info:email', 'emily.clark@example.com'
+Took 0.0026 seconds                                                                                  
+hbase:143:0> put 'transactions', 'T004', 'transaction_details:amount', '1200'
+Took 0.0019 seconds                                                                                  
+hbase:144:0> put 'transactions', 'T004', 'transaction_details:mode', 'PayPal'
+Took 0.0021 seconds                                                                                  
+hbase:145:0> put 'transactions', 'T004', 'transaction_details:date', '2025-03-04'
+Took 0.0021 seconds 
+
+
+c)
+
+
+hbase:146:0> scan 'transactions', {FILTER => "SingleColumnValueFilter('transaction_details', 'amount', >, 'binary:3000')"}
+ROW                        COLUMN+CELL                                                               
+ T001                      column=customer_info:email, timestamp=2025-03-19T15:47:56.984, value=john.
+                           doe@example.com                                                           
+ T001                      column=customer_info:name, timestamp=2025-03-19T15:47:56.971, value=John D
+                           oe                                                                        
+ T001                      column=transaction_details:amount, timestamp=2025-03-19T15:47:56.998, valu
+                           e=5000                                                                    
+ T001                      column=transaction_details:date, timestamp=2025-03-19T15:47:57.026, value=
+                           2025-03-01                                                                
+ T001                      column=transaction_details:mode, timestamp=2025-03-19T15:47:57.012, value=
+                           Credit Card                                                               
+ T003                      column=customer_info:email, timestamp=2025-03-19T15:47:57.104, value=tom.h
+                           arris@example.com                                                         
+ T003                      column=customer_info:name, timestamp=2025-03-19T15:47:57.094, value=Tom Ha
+                           rris                                                                      
+ T003                      column=transaction_details:amount, timestamp=2025-03-19T15:47:57.114, valu
+                           e=3500                                                                    
+ T003                      column=transaction_details:date, timestamp=2025-03-19T15:47:57.134, value=
+                           2025-03-03                                                                
+ T003                      column=transaction_details:mode, timestamp=2025-03-19T15:47:57.125, value=
+                           Credit Card                                                               
+2 row(s)
+Took 0.0070 seconds  
+
+
+d)
+
+
+hbase:147:0> scan 'transactions', {FILTER => "SingleColumnValueFilter('transaction_details', 'mode', =, 'binary:Credit Card')"}
+ROW                        COLUMN+CELL                                                               
+ T001                      column=customer_info:email, timestamp=2025-03-19T15:47:56.984, value=john.
+                           doe@example.com                                                           
+ T001                      column=customer_info:name, timestamp=2025-03-19T15:47:56.971, value=John D
+                           oe                                                                        
+ T001                      column=transaction_details:amount, timestamp=2025-03-19T15:47:56.998, valu
+                           e=5000                                                                    
+ T001                      column=transaction_details:date, timestamp=2025-03-19T15:47:57.026, value=
+                           2025-03-01                                                                
+ T001                      column=transaction_details:mode, timestamp=2025-03-19T15:47:57.012, value=
+                           Credit Card                                                               
+ T003                      column=customer_info:email, timestamp=2025-03-19T15:47:57.104, value=tom.h
+                           arris@example.com                                                         
+ T003                      column=customer_info:name, timestamp=2025-03-19T15:47:57.094, value=Tom Ha
+                           rris                                                                      
+ T003                      column=transaction_details:amount, timestamp=2025-03-19T15:47:57.114, valu
+                           e=3500                                                                    
+ T003                      column=transaction_details:date, timestamp=2025-03-19T15:47:57.134, value=
+                           2025-03-03                                                                
+ T003                      column=transaction_details:mode, timestamp=2025-03-19T15:47:57.125, value=
+                           Credit Card                                                               
+2 row(s)
+Took 0.0077 seconds
+
+
+e)
+
+
+hbase:148:0> scan 'transactions', {COLUMN => ['customer_info:name', 'transaction_details:amount']}
+ROW                        COLUMN+CELL                                                               
+ T001                      column=customer_info:name, timestamp=2025-03-19T15:47:56.971, value=John D
+                           oe                                                                        
+ T001                      column=transaction_details:amount, timestamp=2025-03-19T15:47:56.998, valu
+                           e=5000                                                                    
+ T002                      column=customer_info:name, timestamp=2025-03-19T15:47:57.043, value=Jane S
+                           mith                                                                      
+ T002                      column=transaction_details:amount, timestamp=2025-03-19T15:47:57.062, valu
+                           e=2000                                                                    
+ T003                      column=customer_info:name, timestamp=2025-03-19T15:47:57.094, value=Tom Ha
+                           rris                                                                      
+ T003                      column=transaction_details:amount, timestamp=2025-03-19T15:47:57.114, valu
+                           e=3500                                                                    
+ T004                      column=customer_info:name, timestamp=2025-03-19T15:47:57.149, value=Emily 
+                           Clark                                                                     
+ T004                      column=transaction_details:amount, timestamp=2025-03-19T15:47:57.169, valu
+                           e=1200                                                                    
+4 row(s)
+Took 0.0045 seconds
+
+
+f)
+
+
+hbase:152:0> deleteall 'transactions', 'T002'
+Took 0.0024 seconds
+

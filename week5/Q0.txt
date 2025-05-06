@@ -1,0 +1,81 @@
+bdalab@mcalab04-30:~/220968424/week5$ hdfs dfs -mkdir /user/220968424/lab5
+
+bdalab@mcalab04-30:~/220968424/week5$ hdfs dfs -put input.txt /user/220968424/lab5
+
+
+bdalab@mcalab04-30:~/220968424/week5$ cd /usr/local/pig/bin
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ mr-jobhistory-daemon.sh start historyserver
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig -x mapreduce /home/bdalab/220968424/week5/wordcount5.pig
+Total input paths to process : 1
+(of,3)
+(and,1)
+(Data,1)
+(India,1)
+(Higher,1)
+(Academy,1)
+(Manipal,4)
+(Science,1)
+(Computer,1)
+(Education,1)
+(Institute,1)
+(Karnataka,1)
+(Department,1)
+(Technology,1)
+(Application,1)
+
+
+bdalab@mcalab04-30:~/220968424/week5$ hdfs dfs -put employee.csv /user/220968424/lab5
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig -x mapreduce /home/bdalab/220968424/week5/loadcsv.pig
+Total input paths to process : 1
+(101,John,30,HR,50000)
+(102,Alice,25,IT,60000)
+(103,Bob,35,Finance,70000)
+(104,Joy,36,Manager,55000)
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig -x mapreduce /home/bdalab/220968424/week5/filter.pig
+Total input paths to process : 1
+(103,Bob,35,Finance,70000)
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig -x mapreduce /home/bdalab/220968424/week5/sortd.pig
+Total input paths to process : 1
+(101,John,30,HR,50000)
+(102,Alice,25,IT,60000)
+(103,Bob,35,Finance,70000)
+(104,Joy,36,Manager,55000)
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig -x mapreduce /home/bdalab/220968424/week5/average.pig
+Total input paths to process : 1
+(HR,50000.0)
+(IT,60000.0)
+(Finance,70000.0)
+(Manager,55000.0)
+
+
+bdalab@mcalab04-30:~/220968424/week5$ hdfs dfs -put department.csv /user/220968424/lab5
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig -x mapreduce /home/bdalab/220968424/week5/join.pig
+Total input paths to process : 1
+(101,John,30,HR,50000,HR,Bangalore)
+(102,Alice,25,IT,60000,IT,Bangalore)
+(103,Bob,35,Finance,70000,Finance,Mumbai)
+(104,Joy,36,Manager,55000,Manager,NewYork)
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig -x mapreduce /home/bdalab/220968424/week5/storehdfs.pig
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ hdfs dfs -cat /user/220968424/lab5/output5/part-m-00000
+101,John,30,HR,50000
+102,Alice,25,IT,60000
+103,Bob,35,Finance,70000
+104,Joy,36,Manager,55000
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ mr-jobhistory-daemon.sh stop historyserver
+

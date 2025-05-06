@@ -1,0 +1,73 @@
+bdalab@mcalab04-30:~/220968424/week5$ hdfs dfs -put sales_data.csv /user/220968424/lab5
+
+bdalab@mcalab04-30:~/220968424/week5$ hdfs dfs -put customers_data.csv /user/220968424/lab5
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig /home/bdalab/220968424/week5/Q1_sales.pig
+Total input paths to process : 1
+(1,Smartphone,Electronics,5999.99)
+(2,Laptop,Electronics,99999.99)
+(3,Headphones,Electronics,1500.0)
+(4,Shirt,Clothing,299.99)
+(5,Shoes,Clothing,599.99)
+...
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig /home/bdalab/220968424/week5/Q2_filter_sales.pig
+Total input paths to process : 1
+(1,Smartphone,Electronics,5999.99)
+(2,Laptop,Electronics,99999.99)
+(6,Fridge,Appliances,7999.99)
+(7,Washing Machine,Appliances,49999.99)
+(8,Microwave,Appliances,19999.99)
+...
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig /home/bdalab/220968424/week5/Q3_sort_sales.pig 
+Total input paths to process : 1
+(2,Laptop,Electronics,99999.99)
+(7,Washing Machine,Appliances,49999.99)
+(10,Tablet,Electronics,32999.99)
+(8,Microwave,Appliances,19999.99)
+(20,TV,Electronics,7999.99)
+...
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig /home/bdalab/220968424/week5/Q4_group_sales.pig 
+Total input paths to process : 1
+(Outdoor,1999.989990234375)
+(Clothing,1799.969970703125)
+(Footwear,2000.489990234375)
+(Furniture,350.0)
+(Appliances,82750.93872070312)
+(Electronics,155998.9609375)
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig /home/bdalab/220968424/week5/Q5_join_sales_cust.pig 
+Total input paths to process : 1
+(1,Smartphone,Electronics,5999.99,1,John,New York)
+(2,Laptop,Electronics,99999.99,2,Jane,San Francisco)
+(3,Headphones,Electronics,1500.0,3,Jim,Boston)
+(4,Shirt,Clothing,299.99,4,Jill,Chicago)
+(5,Shoes,Clothing,599.99,5,Jack,Los Angeles)
+...
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig /home/bdalab/220968424/week5/Q6_top_sales.pig
+Total input paths to process : 1
+(2,Laptop,Electronics,99999.99)
+(7,Washing Machine,Appliances,49999.99)
+(10,Tablet,Electronics,32999.99)
+
+
+bdalab@mcalab04-30:/usr/local/pig/bin$ ./pig /home/bdalab/220968424/week5/Q7_store_filter_sales.pig
+
+bdalab@mcalab04-30:~/220968424/week5$ hdfs dfs -cat /user/220968424/lab5/output/high_value_transactions/part-m-00000
+1,Smartphone,Electronics,5999.99
+2,Laptop,Electronics,99999.99
+6,Fridge,Appliances,7999.99
+7,Washing Machine,Appliances,49999.99
+8,Microwave,Appliances,19999.99
+10,Tablet,Electronics,32999.99
+16,Camera,Electronics,5500.0
+20,TV,Electronics,7999.99

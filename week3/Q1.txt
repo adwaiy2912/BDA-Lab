@@ -1,0 +1,38 @@
+bdalab@mcalab04-30:~/220968424/week3$ cat inputwc.txt |python3 mapper1.py
+m	1
+a	1
+n	1
+i	1
+p	1
+a	1
+...
+
+
+bdalab@mcalab04-30:~/220968424/week3$ cat inputwc.txt |python3 mapper1.py|sort|python3 reducer1.py
+a	22
+c	7
+d	6
+e	10
+f	3
+g	2
+...
+
+
+1.
+
+(vi)
+bdalab@mcalab04-30:~/220968424/week3$ hdfs dfs -put inputwc.txt /user/220968424/lab3
+
+(vii)
+bdalab@mcalab04-30:~/220968424/week3$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.4.1.jar -file mapper1.py -mapper mapper1.py -file reducer1.py -reducer reducer1.py -input /user/220968424/lab3/inputwc.txt -output /user/220968424/lab3/output1
+
+(viii)
+bdalab@mcalab04-30:~/220968424/week3$ hdfs dfs -cat /user/220968424/lab3/output1/part-00000
+a	22
+c	7
+d	6
+e	10
+f	3
+g	2
+h	3
+...
